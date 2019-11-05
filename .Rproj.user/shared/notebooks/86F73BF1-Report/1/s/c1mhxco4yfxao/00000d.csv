@@ -1,0 +1,2 @@
+"0","ggplot(elec_volume, aes(x=product_type, y=volume, fill = product_type)) +"
+"0","  geom_bar(stat = ""identity"") + ggtitle(""Electronidex - sales volume per category"")"

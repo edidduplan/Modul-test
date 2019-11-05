@@ -1,0 +1,17 @@
+---
+title: "Sinergies Balckwell & Electronidex"
+author: "Edison Guevara"
+date: "1 11 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, collapse = T, cache = T)
+```
+
+
+```{r}
+# Loading required libraries
+pacman::p_load(tidyverse, caret, readr, VIM, rstudioapi, arules, arulesViz,
+               DEoptimR)
+```

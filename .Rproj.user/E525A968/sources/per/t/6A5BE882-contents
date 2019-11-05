@@ -1,0 +1,380 @@
+---
+title: "Sinergies between Blackwell and Electronidex"
+author: "Edison Guevara"
+date: "1-11-2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, collapse = T, cache = T)
+```
+
+# Goal and Objectives
+
+The objective of the following report is to compare sales´ data from Blackwell together with an online company called "Electronidex" in order to determine whether there are sinergies between both companies as to support a merging between them.
+
+# Excecutive Summary
+
+By comparing the sales volume per product category of Electronidex with Blackwell´s and looking at the association rules found on Electronidex´s B2B transactions no significant synergies can be found. Therefore the adquisition of Electronidex is not recommended.
+
+The reasons are the following:
+- The are no significant association rules found on Electronidex´s  B2C transactions. On the other hand Blackwell´s clients are mainly private.
+- The 5 more significant association rules found on Electronidex´s B2B transactions are: 
+  * {Monitor}	=>	{Accessories}		
+  *	{Laptop}	=>	{Accessories}		
+  *	{Accessories}	=>	{Desktop}		
+  *	{Desktop}	=>	{Accessories}		
+  *	{Laptop}	=>	{Desktop}
+However, Blackwell won´t benefit from increasing their sales in Accessories, since they yield the least profit. On the other hand, Electronidex´s sales of Desktops, Laptops and Monitors are much higher than Blackwell´s, which means Electronidex will be the one profiting from the associations but not Blackwell.
+
+```{r}
+# Loading required libraries
+pacman::p_load(tidyverse, caret, readr, VIM, rstudioapi, arules, arulesViz,
+               DEoptimR)
+```
+
+```{r}
+# Importing data
+# Set working directory
+# current_path = getActiveDocumentContext()$path
+# setwd("C:/Users/edison/Documents/Ubiqum/Data Analytics Course/Module II/Task4/")
+
+# Electronidex transactional data
+
+ElectronidexTrans2017_df <- read.csv("C:/Users/edison/Documents/Ubiqum/Data Analytics Course/Module II/Task4/ElectronidexTransactions2017.csv", 
+                                     header = F, sep = ",", strip.white = T)
+
+ElectronidexTrans2017 <- read.transactions("C:/Users/edison/Documents/Ubiqum/Data Analytics Course/Module II/Task4/ElectronidexTransactions2017.csv", 
+                                           header = F, sep = ",", 
+                                           format = "basket", 
+                                           rm.duplicates = T)
+
+# Product Type key file
+ProductType_key <- read.csv("C:/Users/edison/Documents/Ubiqum/Data Analytics Course/Module II/Task4/ProductType_csv.csv", header = T, sep = ";")
+
+# Blackwell product data
+existingprod <- read.csv("C:/Users/edison/Documents/Ubiqum/Data Analytics Course/Module II/Task4/Data_BW/existingproductattributes2017.csv")
+
+newprod <- read.csv("C:/Users/edison/Documents/Ubiqum/Data Analytics Course/Module II/Task4/Data_BW/newprod_pred.csv", header = T)
+
+```
+
+# Pre-processing the data
+
+
+```{r}
+# Preprocessing Blackwell product data
+
+# Adding Profit monthly to existing products
+existingprod$ProfitMonthly <- existingprod$Volume * existingprod$Price * 
+  existingprod$ProfitMargin
+
+# Merging existing with new products in one data frame
+newprod$Volume <- NULL
+colnames(newprod)[colnames(newprod) == "finalpredictedvolume"] <- "Volume"
+
+blackwell_prod <- rbind(existingprod, newprod)
+levels(blackwell_prod$ProductType)[2] <- "Monitor"
+levels(blackwell_prod$ProductType)[7] <- "Desktop"
+levels(blackwell_prod$ProductType)
+
+```
+
+
+# Exploring the data
+
+```{r}
+# Exploring the transactions file
+# summary(ElectronidexTrans2017)
+#inspect(head(ElectronidexTrans2017,2))
+# length(ElectronidexTrans2017)
+
+# size(ElectronidexTrans2017)
+# summary(size(ElectronidexTrans2017))
+# str(size(ElectronidexTrans2017))
+
+# head(LIST(ElectronidexTrans2017),5)
+```
+
+## Electronidex figures
+
+```{r}
+itemFrequencyPlot(ElectronidexTrans2017, topN = 10, type = "absolute")
+
+str(ElectronidexTrans2017_df)
+
+# Changing factors into char 
+ElectronidexTrans2017_df <- ElectronidexTrans2017_df %>% 
+  mutate_if(is.factor, as.character)
+
+# Adding up Electronidex data frame to calculate sales volume
+elec_volume <- data.frame(table(unlist(ElectronidexTrans2017_df)))
+elec_volume <- elec_volume[-1,]
+rownames(elec_volume) <- NULL
+colnames(elec_volume) <- c("product_name", "volume")
+elec_volume <- elec_volume[order(elec_volume$product_name),]
+
+# Merging product type to elec_volume
+checking_vector <- c()
+checking_vector
+str(checking_vector)
+str(elec_volume)
+str(ProductType_key)
+
+for (i in 1:125){
+  checking_vector[i] <- ProductType_key[i,1] == elec_volume[i,1]
+}
+
+
+Comparison_vector <- cbind(elec_volume$product_name, 
+                           ProductType_key$ProductName, 
+                           as.data.frame(checking_vector))
+
+elec_volume$product_type <- ProductType_key$BlackWell
+
+```
+
+## Electronidex sales volume
+
+### Sales volume distribution
+```{r}
+ggplot(elec_volume, aes(volume, fill = product_type)) + 
+  geom_histogram(binwidth = 200, color ="white")
+```
+
+### Sales volume per category
+```{r}
+ggplot(elec_volume, aes(x=product_type, y=volume, fill = product_type)) +
+  geom_bar(stat = "identity") + ggtitle("Electronidex - sales volume per category")
+```
+
+# Comparison with Blackwell
+
+```{r}
+
+# Setting category "Laptop and Netbook"
+
+# levels(blackwell_prod$ProductType)[(levels(blackwell_prod$ProductType) == 
+#                                     "Laptop")] <- "Laptop&Netbook"
+
+# levels(blackwell_prod$ProductType)[(levels(blackwell_prod$ProductType) == 
+#                                     "Netbook")] <- "Laptop&Netbook"
+
+ggplot(blackwell_prod, aes(x = ProductType, y = Volume, fill = ProductType)) +
+  geom_bar(stat = "identity") +
+  ggtitle("BW's products (whole portfolio) - sales volume")
+
+ggplot(blackwell_prod, aes(x = ProductType, y = ProfitMonthly, fill = 
+                             ProductType)) +
+  geom_bar(stat = "identity") +
+  ggtitle("BW's products (whole portfolio) - Profit")
+
+ggplot(existingprod, aes(x = ProductType, y = ProfitMargin, 
+                         color = ProductType)) +  geom_boxplot()
+
+ggplot(existingprod, aes(x = ProductType, y = Price, 
+                         color = ProductType)) +  geom_boxplot()
+```
+
+# Estimating Electronidex's profit monthly
+
+We will use BW's product type price and profit margin in order to estimate Electronidex's monthly profit. For this we will use the median of the products per category (to account for outliers).
+
+```{r}
+# Getting meadian for price and profit margin in BW's data
+bw_price <- boxplot(existingprod$Price ~ existingprod$ProductType, plot = F)$stats[3,]
+
+bw_profitmargin <- boxplot(existingprod$ProfitMargin ~ existingprod$ProductType, plot = F)$stats[3,]
+
+bw_product_type <- cbind(levels(blackwell_prod$ProductType), bw_price, bw_profitmargin)
+
+colnames(bw_product_type)[1] <- "product_type"
+
+bw_product_type <- as.data.frame(bw_product_type)
+
+# Creating a data frame to merge Elec?s data with estimated price and profit margin
+elec_volume_profit <- merge(elec_volume, bw_product_type, by = "product_type")
+
+elec_volume_profit$volume <- as.integer(elec_volume_profit$volume)
+elec_volume_profit$bw_price <- as.numeric(elec_volume_profit$bw_price)
+elec_volume_profit$bw_profitmargin <- 
+  as.numeric(elec_volume_profit$bw_profitmargin)
+
+elec_volume_profit$profit <- elec_volume_profit$volume * 
+  elec_volume_profit$bw_price * elec_volume_profit$bw_profitmargin
+```
+
+Ploting the estimated monthly profit of Electronidex per product type.
+```{r}
+ggplot(elec_volume_profit, aes(x = product_type, y = profit, fill = product_type)) +
+  geom_bar(stat = "identity") +
+  ggtitle("Elec's products (whole portfolio) - Profit")
+```
+
+# Spliting the data
+
+## Understanding Electronidex's transactions
+```{r}
+dist_trans <- sort(size(ElectronidexTrans2017), decreasing = F )
+dist_trans <- as.data.frame(dist_trans)
+colnames(dist_trans) <- c("transaction_size")
+
+ggplot(dist_trans, aes(x = transaction_size)) + 
+  geom_histogram(binwidth = 1, color = "white") +
+  ggtitle("Distribution of the transaction's size at Elec")
+```
+
+```{r}
+summary(size(ElectronidexTrans2017))
+```
+
+As can be seen in the previous figure, there are transactions with up to 30 different products. This situation indicates that some customers are companies (B2B transactions). On the other hand, most transactions contain up to 3 items, which indicates that most customers are private (B2C transactions). Given this situation, a split of the data is needed in order to look for specific association rules.
+
+## Adding product type to Elec's transactional file
+
+In order to look for sinergies between BW and Elec only the product type will be considered. For this, the product type of BW will be used, covering all product types been sold by Elec.
+```{r}
+ElectronidexTrans2017@itemInfo$ProductType <- ProductType_key$BlackWell
+
+```
+
+## Splitting the data - rules
+
+
+```{r}
+
+itemfreq_df <- as.data.frame(itemFrequency(ElectronidexTrans2017, type = "absolute"))
+itemfreq_df["iMac",1]
+
+inspect(head(ElectronidexTrans2017[size(ElectronidexTrans2017) > 5], 5))
+
+# Finding the indices of transactions with 3 or more desktops (ind)
+Desktop <- ElectronidexTrans2017@itemInfo[which(ProductType_key$BlackWell == 
+                                                  "Desktop"), 1]
+
+ind <- c()
+counter <- 0
+for (i in 1:9){
+  for (j in (1:9)[-i]){
+    for (k in (1:9)[-c(i,j)]){
+      ind <- c(ind, which(ElectronidexTrans2017 %in% Desktop[i] & 
+               ElectronidexTrans2017 %in% Desktop[j] &
+               ElectronidexTrans2017 %in% Desktop[k]))
+      counter <- counter + 1
+    }
+  }
+}
+ind <- unique(ind)
+
+# Finding the indices of transactions with 3 or more laptops (ind4)
+Laptop <- ElectronidexTrans2017@itemInfo[which(ProductType_key$BlackWell == 
+                                                  "Laptop"), 1]
+ind4 <- c()
+counter <- 0
+for (i in 1:10){
+  for (j in (1:10)[-i]){
+    for (k in (1:10)[-c(i,j)]){
+      ind4 <- c(ind4, which(ElectronidexTrans2017 %in% Laptop[i] & 
+               ElectronidexTrans2017 %in% Laptop[j] &
+               ElectronidexTrans2017 %in% Laptop[k]))
+      counter <- counter + 1
+    }
+  }
+}
+
+ind4 <- unique(ind4)
+
+# Finding the indices of transactions higher than 4 items (ind2)
+ind2 <- which(size(ElectronidexTrans2017) > 4)
+ind2 <- unique(ind2)
+
+# Consolidating the indices (ind_t)
+
+ind_t <- c(ind, ind2, ind4)
+ind_t <- unique(ind_t)
+
+ElectronidexTrans2017_B2B <- ElectronidexTrans2017[ind_t]
+
+ElectronidexTrans2017_B2C <- ElectronidexTrans2017[-ind_t]
+
+ElectronidexTrans2017_B2B
+ElectronidexTrans2017_B2C
+inspect(head(ElectronidexTrans2017_B2B[size(ElectronidexTrans2017_B2B) < 5], 5))
+inspect(head(ElectronidexTrans2017_B2C[size(ElectronidexTrans2017_B2C) < 5], 5))
+
+```
+
+The final split of transactions is as follows:
+
+- B2B: 3778 transactions
+  * 3 or more desktops
+  * 3 or more laptops
+  * more than 4 items baught
+
+- B2C: 6057 transactions
+
+# Association rules
+
+## Association rules for B2C
+```{r}
+ElectronidexTrans2017_B2C_pt <- arules::aggregate(ElectronidexTrans2017_B2C, 
+                                                by = "ProductType")
+
+association_rules_b2c_pt <- apriori(ElectronidexTrans2017_B2C_pt, 
+                             parameter = list(supp = 0.005, conf = 0.8, 
+                                              minlen = 2))
+
+ElectronidexTrans2017_pt <- arules::aggregate(ElectronidexTrans2017, 
+                                                by = "ProductType")
+
+association_rules_pt <- apriori(ElectronidexTrans2017_pt, 
+                             parameter = list(supp = 0.0001, conf = 0.8, 
+                                              minlen = 2))
+
+head(inspect(sort(association_rules_b2c_pt, by = "lift")),5)
+```
+
+## Association rules for B2B
+
+```{r}
+ElectronidexTrans2017_B2B_pt <- arules::aggregate(ElectronidexTrans2017_B2B, 
+                                                by = "ProductType")
+
+association_rules_b2b_pt <- apriori(ElectronidexTrans2017_B2B_pt, 
+                             parameter = list(supp = 0.6, conf = 0.8, 
+                                              minlen = 2))
+
+head(inspect(sort(association_rules_b2b_pt, by = "lift")),5)
+```
+
+The split in the transactional data is found to be relevant. The number of associations rules which can be found in the whole data (keeping the same parameters) is 262. After splitting 0 association rules can be found in the B2C data set but 640 rules are found in the B2B. This means that after splitting more association rules can be found and all of them are in B2B.
+The 5 most relevant rules in B2B are:
+
+[1]	{Monitor}	=>	{Accessories}	
+[2]	{Laptop}	=>	{Accessories}	
+[3]	{Accessories}	=>	{Desktop}	
+[4]	{Desktop}	=>	{Accessories}	
+[5]	{Laptop}	=>	{Desktop}	
+
+# Annex
+
+## Blackwell - comparison current vs new products
+```{r}
+ggplot(existingprod, aes(x = ProductType, y = Volume)) +
+  geom_bar(stat = "identity") + 
+  ggtitle("BW's existing products - sales volume")
+
+ggplot(newprod, aes(x = ProductType, y = Volume)) +
+  geom_bar(stat = "identity") +
+  ggtitle("BW's new products - sales volume")
+
+ggplot(existingprod, aes(x = ProductType, y = ProfitMonthly)) +
+  geom_bar(stat = "identity") +
+  ggtitle("BW's existing products - Profit")
+
+ggplot(newprod, aes(x = ProductType, y = ProfitMonthly)) +
+  geom_bar(stat = "identity") +
+  ggtitle("BW's new products - Profit")
+
+```
+

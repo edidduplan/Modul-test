@@ -1,0 +1,11 @@
+"0","# Importing data"
+"0","# Set working directory"
+"0","current_path = getActiveDocumentContext()$path"
+"0","setwd(dirname(current_path))"
+"0",""
+"0","# Electronidex transactional data"
+"0","ElectronidexTrans2017_df <- read.csv(""ElectronidexTransactions2017.csv"", "
+"0","                                     header = F, sep = "","", strip.white = T)"
+"2","cannot open file 'ElectronidexTransactions2017.csv': No such file or directory"
+"2","Error in file(file, ""rt"") : cannot open the connection
+"

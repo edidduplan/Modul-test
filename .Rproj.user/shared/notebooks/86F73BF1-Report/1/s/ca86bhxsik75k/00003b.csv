@@ -1,0 +1,5 @@
+"0",""
+"0","ggplot(blackwell_prod, aes(x = ProductType, y = ProfitMonthly, fill = "
+"0","                             ProductType)) +"
+"0","  geom_bar(stat = ""identity"") +"
+"0","  ggtitle(""BW's products (whole portfolio) - Profit"")"

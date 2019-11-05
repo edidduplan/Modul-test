@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1572608526304.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1126745092",
+    "id" : "6A5BE882",
+    "lastKnownWriteTime" : 1572814460,
+    "last_content_update" : 1572814460261,
+    "path" : "~/Ubiqum/Data Analytics Course/Module II/Task4/Report.Rmd",
+    "project_path" : "Report.Rmd",
+    "properties" : {
+        "cursorPosition" : "352,31",
+        "docOutlineVisible" : "0",
+        "last_setup_crc32" : "9185FAA572fa04ea",
+        "scrollLine" : "348",
+        "tempName" : "Untitled1",
+        "working_dir" : "default"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

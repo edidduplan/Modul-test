@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1571908412241.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "493860676",
+    "id" : "7A1915D8",
+    "lastKnownWriteTime" : 1572628746,
+    "last_content_update" : 1572628746808,
+    "path" : "~/Ubiqum/Data Analytics Course/Module II/Task4/MarketBasket_Script.R",
+    "project_path" : "MarketBasket_Script.R",
+    "properties" : {
+        "cursorPosition" : "53,20",
+        "scrollLine" : "37",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,3 @@
+"0",""
+"0","ggplot(existingprod, aes(x = ProductType, y = ProfitMargin, "
+"0","                         color = ProductType)) +  geom_boxplot()"

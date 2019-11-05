@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1572628926957.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "6AA2621B",
+    "lastKnownWriteTime" : 7160565582308668259,
+    "last_content_update" : 1572628926957,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "id" : "bf4846d58cdd4e2ca1eb45d9ea3fc67f",
+        "name" : "ElectronidexTrans2017",
+        "title" : "ElectronidexTrans2017"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "object_explorer"
+}

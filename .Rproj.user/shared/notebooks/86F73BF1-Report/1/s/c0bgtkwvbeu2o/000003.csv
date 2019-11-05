@@ -1,0 +1,3 @@
+"0","ggplot(elec_volume_profit, aes(x = product_type, y = profit, fill = product_type)) +"
+"0","  geom_bar(stat = ""identity"") +"
+"0","  ggtitle(""Elec's products (whole portfolio) - Profit"")"

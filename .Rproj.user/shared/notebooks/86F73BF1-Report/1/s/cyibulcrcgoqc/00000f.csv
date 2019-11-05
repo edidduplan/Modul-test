@@ -1,0 +1,2 @@
+"0","ggplot(elec_volume, aes(volume, fill = product_type)) + "
+"0","  geom_histogram(binwidth = 200, color =""white"")"

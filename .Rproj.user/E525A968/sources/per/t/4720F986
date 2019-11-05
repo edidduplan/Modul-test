@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1572623446905.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "4720F986",
+    "lastKnownWriteTime" : 14918470124437553,
+    "last_content_update" : 1572623446905,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "FE43EFA0",
+        "caption" : "elec_volume_profit",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=elec_volume_profit&cache_key=FE43EFA0",
+        "displayedObservations" : 120,
+        "environment" : "",
+        "expression" : "elec_volume_profit",
+        "object" : "elec_volume_profit",
+        "preview" : 0,
+        "totalObservations" : 120,
+        "variables" : 5
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

@@ -1,0 +1,4 @@
+"0","head(inspect(sort(association_rules_b2c_pt, by = ""lift"")),5)
+"
+"1","NULL
+"

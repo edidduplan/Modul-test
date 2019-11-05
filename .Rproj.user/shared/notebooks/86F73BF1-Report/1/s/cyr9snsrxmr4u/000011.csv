@@ -1,0 +1,7 @@
+"0","dist_trans <- sort(size(ElectronidexTrans2017), decreasing = F )"
+"0","dist_trans <- as.data.frame(dist_trans)"
+"0","colnames(dist_trans) <- c(""transaction_size"")"
+"0",""
+"0","ggplot(dist_trans, aes(x = transaction_size)) + "
+"0","  geom_histogram(binwidth = 1, color = ""white"") +"
+"0","  ggtitle(""Distribution of the transaction's size at Elec"")"

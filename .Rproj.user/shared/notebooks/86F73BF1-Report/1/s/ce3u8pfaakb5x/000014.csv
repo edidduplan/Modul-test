@@ -1,0 +1,4 @@
+"0",""
+"0","ggplot(newprod, aes(x = ProductType, y = Volume)) +"
+"0","  geom_bar(stat = ""identity"") +"
+"0","  ggtitle(""BW's new products - sales volume"")"

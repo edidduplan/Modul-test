@@ -1,0 +1,5 @@
+"0",""
+"0","ggplot(newprod, aes(x = ProductType, y = ProfitMonthly)) +"
+"0","  geom_bar(stat = ""identity"") +"
+"0","  ggtitle(""BW's new products - Profit"")"
+"0",""
